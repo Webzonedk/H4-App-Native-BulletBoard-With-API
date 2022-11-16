@@ -1,5 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
 
+string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
+        {
+            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+           // builder.AllowCredentials().AllowAnyHeader().AllowAnyMethod().WithOrigins(new string[] { "https://localhost:4200", "http://localhost:4200", "https://cp03.resellerhotel.dk:3306" });
+        });
+});
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -15,6 +29,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(MyAllowSpecificOrigins);
+
 
 app.UseHttpsRedirection();
 
