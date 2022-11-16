@@ -16,6 +16,7 @@ namespace API.Controllers
 
 
 
+
         [Route("post]")]
         [HttpPost]
         public IActionResult PostImages([FromBody] string image)
@@ -30,9 +31,10 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(401, "Image Coukd not be uploaded");
+                return StatusCode(401, "Image Could not be uploaded");
             }
         }
+
 
 
 
