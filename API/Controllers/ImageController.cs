@@ -3,22 +3,35 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+
     public class ImageController : Controller
     {
         internal List<string> images = new();
 
-        [Route("getimages]")]
-        [HttpGet]
+        public ImageController(IConfiguration configuration)
+        {
+          
+        }
+
+        
+        [HttpGet("downloadimages")]
         public IActionResult GetImages()
         {
-            return Ok(images);
+            try
+            {
+            return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(401, "Image Could not be downloaded");
+            }
         }
 
 
 
 
-        [Route("post]")]
-        [HttpPost]
+       
+        [HttpPost("uploadimages")]
         public IActionResult PostImages([FromBody] string image)
         {
             try
@@ -38,8 +51,8 @@ namespace API.Controllers
 
 
 
-        [Route("delete]")]
-        [HttpPost]
+      
+        [HttpPost("deletesingleimage")]
         public IActionResult DeleteImages([FromBody] string image)
         {
             try

@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/action_camera"
+        android:icon="@drawable/cam_icon"
+        android:title="camera"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/order_images"
+        android:icon="@drawable/order_reset_icon"
+        android:title="Reorder"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/bullet_board"
+        android:icon="@drawable/bulletboard_icon"
+        android:title="Bulletboard"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/clear_all"
+        android:icon="@drawable/clear_icon"
+        android:title="Clear bulletboard"
+        app:showAsAction="always" />
 </menu>
