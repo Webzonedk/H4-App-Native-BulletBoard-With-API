@@ -1,25 +1,54 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace API.Controllers
 {
+    //[ApiController]
+    //[Route("[controller]")]
 
     public class ImageController : Controller
     {
-        internal List<string> images = new();
+        internal List<Image> images = new();
 
         public ImageController(IConfiguration configuration)
         {
-          
+
         }
 
-        
+
+
+
+        [HttpGet("download")]
+        public IActionResult Test()
+        {
+
+            try
+            {
+
+                //TestImageObject()
+               // string test = "tester lige her";
+                return Ok(TestImage());
+            }
+            catch (Exception)
+            {
+                return StatusCode(401, "Image Could not be downloaded");
+            }
+        }
+
+
+
         [HttpGet("downloadimages")]
         public IActionResult GetImages()
         {
+            
             try
             {
-            return Ok();
+
+                //TestImageObject()
+                string test = "tester lige her";
+                return Ok(test );
             }
             catch (Exception)
             {
@@ -30,9 +59,9 @@ namespace API.Controllers
 
 
 
-       
+
         [HttpPost("uploadimages")]
-        public IActionResult PostImages([FromBody] string image)
+        public IActionResult PostImages([FromBody] Image image)
         {
             try
             {
@@ -51,9 +80,9 @@ namespace API.Controllers
 
 
 
-      
+
         [HttpPost("deletesingleimage")]
-        public IActionResult DeleteImages([FromBody] string image)
+        public IActionResult DeleteImages([FromBody] Image image)
         {
             try
             {
@@ -64,6 +93,26 @@ namespace API.Controllers
             {
                 return StatusCode(401, "Image does not exist in list");
             }
+        }
+
+        public string TestImage()
+        {
+
+
+            byte[] imageArray = System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221103_173109.jpg");
+            string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+            Debug.WriteLine(base64ImageRepresentation);
+            return base64ImageRepresentation;
+
+        }
+
+        public List<Image> TestImageObject()
+        {
+            byte[] imageArray = System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221103_173109.jpg");
+            Image base64ImageRepresentation = new(Convert.ToBase64String(imageArray));
+        
+            images.Add(base64ImageRepresentation);
+            return images;
         }
 
 
