@@ -11,8 +11,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,22 +22,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 
 import android.util.Base64;
 
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -45,9 +58,16 @@ public class MainActivity extends AppCompatActivity {
     TextView txtString;
     //public String url = "http://10.0.2.2:5076/download"; //home
 
-    public String url = "http://192.168.2.102:5076/download"; //home
+    public String postUrl = "http://192.168.2.102:5076/uploadimage"; //home
+    public String getUrl = "http://192.168.2.102:5076/downloadimage"; //home
+
     //public String url = "http://10.108.162.26:5076/downloadimages"; //school
     //public String url = "https://reqres.in/api/users/2";
+
+
+    public Bitmap[] images;
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 
     @Override
@@ -66,9 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
         //btnGetRequest = findViewById(R.id.btnGetRequest);
         txtString = (TextView) findViewById(R.id.txtString);
-
-
-
 
 
         //Requesting camera runtime permission
@@ -118,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     public void displayInfo(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
@@ -130,21 +148,59 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
             String outputString = convertBitmapToString(bitmap);
+            String OutputNoLine = outputString.replaceAll("\n", "");
+
+            //imageView.setImageBitmap(bitmap);
 
 
-            imageView.setImageBitmap(bitmap);
+            //String postBody=outputString ;
 
+            String postBody = "{" + "\"name\":\"" + OutputNoLine + "\"}";
+
+//Calling the post function
+            try {
+                postRequest(postUrl, postBody);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
     }
 
 
+
+    void postRequest(String postUrl, String postBody) throws IOException {
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = RequestBody.create(postBody, JSON);
+
+        Request request = new Request.Builder()
+                .url(postUrl)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                call.cancel();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("TAG", response.body().string());
+            }
+        });
+    }
+
+
+    // Retrieving images from API
     void run() throws IOException {
 
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(url)
+                .url(getUrl)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -156,16 +212,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-
                 final String myResponse = response.body().string();
 
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        txtString.setText(myResponse);
+
+
+                        try {
+                            Bitmap tempBitmap = convertStringToBitmap(myResponse);
+                            imageView.setImageBitmap(tempBitmap);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
-
             }
         });
     }
@@ -179,6 +240,14 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+
+    public static Bitmap convertStringToBitmap(String input) {
+        byte[] byteArray1;
+        byteArray1 = Base64.decode(input, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray1, 0,
+                byteArray1.length);/* w  w  w.ja va 2 s  .  c om*/
+        return bitmap;
+    }
 
 
 }

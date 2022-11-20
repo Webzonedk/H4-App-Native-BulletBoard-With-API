@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace API.Controllers
 {
@@ -11,6 +12,9 @@ namespace API.Controllers
     public class ImageController : Controller
     {
         internal List<Image> images = new();
+       // internal List<byte[]> byteImages = new();
+      
+        internal Image _image = new("Image was not filled");
 
         public ImageController(IConfiguration configuration)
         {
@@ -20,35 +24,13 @@ namespace API.Controllers
 
 
 
-        [HttpGet("download")]
-        public IActionResult Test()
-        {
-
-            try
-            {
-
-                //TestImageObject()
-               // string test = "tester lige her";
-                return Ok(TestImage());
-            }
-            catch (Exception)
-            {
-                return StatusCode(401, "Image Could not be downloaded");
-            }
-        }
-
-
-
-        [HttpGet("downloadimages")]
+        [HttpGet("downloadimage")]
         public IActionResult GetImages()
         {
-            
+
             try
             {
-
-                //TestImageObject()
-                string test = "tester lige her";
-                return Ok(test );
+                return Ok(_image);
             }
             catch (Exception)
             {
@@ -58,18 +40,16 @@ namespace API.Controllers
 
 
 
-
-
-        [HttpPost("uploadimages")]
+        [HttpPost("uploadimage")]
         public IActionResult PostImages([FromBody] Image image)
         {
             try
             {
-                if (!images.Contains(image))
+                if (image != null)
                 {
-                    images.Add(image);
+                _image = image;
                 }
-                return Ok(images);
+                return Ok(_image);
             }
             catch (Exception)
             {
@@ -80,40 +60,53 @@ namespace API.Controllers
 
 
 
-
-        [HttpPost("deletesingleimage")]
-        public IActionResult DeleteImages([FromBody] Image image)
-        {
-            try
-            {
-                images.RemoveAt(images.IndexOf(image));
-                return Ok(images);
-            }
-            catch (Exception)
-            {
-                return StatusCode(401, "Image does not exist in list");
-            }
-        }
-
-        public string TestImage()
-        {
+        //[HttpPost("deletesingleimage")]
+        //public IActionResult DeleteImages([FromBody] Image image)
+        //{
+        //    try
+        //    {
+        //        images.RemoveAt(images.IndexOf(image));
+        //        return Ok(images);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(401, "Image does not exist in list");
+        //    }
+        //}
 
 
-            byte[] imageArray = System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221103_173109.jpg");
-            string base64ImageRepresentation = Convert.ToBase64String(imageArray);
-            Debug.WriteLine(base64ImageRepresentation);
-            return base64ImageRepresentation;
 
-        }
+        //public string TestImage()
+        //{
 
-        public List<Image> TestImageObject()
-        {
-            byte[] imageArray = System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221103_173109.jpg");
-            Image base64ImageRepresentation = new(Convert.ToBase64String(imageArray));
-        
-            images.Add(base64ImageRepresentation);
-            return images;
-        }
+
+        //    byte[] imageArray = System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221103_173109.jpg");
+        //    string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+        //    Debug.WriteLine(base64ImageRepresentation);
+        //    return base64ImageRepresentation;
+
+        //}
+
+
+
+
+        //public List<Image> TestImageObject()
+        //{
+        //    // byte[] imageArray = System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20220915_080453.jpg");
+
+        //    images.Add(new Image(Convert.ToBase64String(System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20220912_105127.jpg"))));
+        //    images.Add(new Image(Convert.ToBase64String(System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221103_173109.jpg"))));
+        //    images.Add(new Image(Convert.ToBase64String(System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20221006_140053.jpg"))));
+        //    images.Add(new Image(Convert.ToBase64String(System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20220915_080453.jpg"))));
+        //    images.Add(new Image(Convert.ToBase64String(System.IO.File.ReadAllBytes(@"C:\Users\kent3211\Development\h4\App\Native\BulletBoard\API\Assets\20220818_111926.jpg"))));
+                
+                
+       
+        //    //Image base64ImageRepresentation = new(Convert.ToBase64String(imageArray));
+
+        //   // images.Add(base64ImageRepresentation);
+        //    return images;
+        //}
 
 
     }
